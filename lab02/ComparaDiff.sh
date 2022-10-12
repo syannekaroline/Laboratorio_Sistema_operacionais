@@ -1,5 +1,6 @@
 #!/bin/sh
 ########################################
+cd ~/lab02/
 zip Modelo -r Producao/ && zip Modelo -r Producao/
 comparacao=$(diff ~/lab02/Modelo/ ~/lab02/Producao/)
 
@@ -8,7 +9,7 @@ echo "Iguais"
 else
 echo "Diferentes"
 echo $comparacao
-#sendemail -f syanne.tavares@icen.ufpa.br -t syanne.tavares@icen.ufpa.br -u "Atenção aos arquivos de Produção" -m "Atenção!! Os arquivos de Produção estão modificados!!! $comparacao" -s cupijo.ufpa.br:587 -xu syanne.tavares@icen.ufpa.br -xp Rosiane2610
+#sendemail -f syanne.tavares@icen.ufpa.br -t syanne.tavares@icen.ufpa.br -u "Atenção aos arquivos de Produção" -m "Atenção!! Os arquivos de Produção estão modificados!!! $comparacao" -s cupijo.ufpa.br:587 -xu syanne.tavares@icen.ufpa.br -xp 
 
 echo "removendo Producao/"
 rm -rf Producao

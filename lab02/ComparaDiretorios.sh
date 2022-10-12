@@ -16,7 +16,7 @@ if [ $key1 = $key2 ]; then
 echo "Iguais"
 else
 echo "Diferentes"
-#sendemail -f syanne.tavares@icen.ufpa.br -t syanne.tavares@icen.ufpa.br -u "Atenção aos arquivos de Produção" -m "Atenção!! Os arquivos de Produção estão modificados!!!" -s cupijo.ufpa.br:587 -xu syanne.tavares@icen.ufpa.br -xp Rosiane2610
+#sendemail -f syanne.tavares@icen.ufpa.br -t syanne.tavares@icen.ufpa.br -u "Atenção aos arquivos de Produção" -m "Atenção!! Os arquivos de Produção estão modificados!!!" -s cupijo.ufpa.br:587 -xu syanne.tavares@icen.ufpa.br -xp 
 echo "removendo o arquivo de producao"
 rm -rf Producao
 echo "Extraindo modelo"
