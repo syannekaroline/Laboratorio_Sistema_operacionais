@@ -1,10 +1,13 @@
 #!/bin/sh
 ########################################
-cd ~/lab02/
-zip Modelo -r Producao/ && zip Modelo -r Producao/
-comparacao=$(diff ~/lab02/Modelo/ ~/lab02/Producao/)
+cd ~/labSO/lab02/
+mkdir Modelo
+tar -xvzf Modelo.tar.gz -C ~/labSO/lab02/Modelo
 
-if [  -z $comparacao ]; then
+comparacao=$(diff ~/labSO/lab02/Modelo/Producao/ ~/labSO/lab02/Producao/ | awk '{ print $2 }'
+)
+
+if [ $comparacao = "idênticos:" ]; then
 echo "Iguais"
 else
 echo "Diferentes"
@@ -14,7 +17,9 @@ echo $comparacao
 echo "removendo Producao/"
 rm -rf Producao
 echo "Extraindo modelo"
-unzip Modelo.zip
+tar -xvzf Modelo.tar.gz
 echo "O diretório de Produção Oficial foi restaurado!!"
 fi
-rm -rf Modelo.zip
+#Removendo Pasta modelo
+rm -rf Modelo
+
