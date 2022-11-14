@@ -9,12 +9,19 @@
 
 int main(int argc, char* argv[]){
     int id = fork();
+    char Buffer[BUF_SIZE];
     
     for (int i = 1; i <= 5; i++){
         printf("Hello world from id : %d\n", id);
 
         if  (id == 0 ){
             printf("hello world from child process\n");
+
+            sprintf(Buffer,"Hello World");
+            sprintf(Buffer + strlen(Buffer),"Good Morning");
+            sprintf(Buffer + strlen(Buffer),"Good Afternoon");
+
+            write(1, Buffer, strlen(Buffer));
         
         }
         else {
