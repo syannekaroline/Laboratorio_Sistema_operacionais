@@ -1,12 +1,3 @@
-"""
-1) O escalonador de processo que utiliza o Round Robin deve ter as seguintes entradas: a. Time slice da CPU; 
-b. Processos com seus respectivos tempos de CPU e, caso necessário, com a sua prioridade,  que deverá estar entre 0 e 10, sendo 0 processo com maior prioridade. 
-Time slice: 10 
-P1, 200 
-P2, 300 
-P3, 25 
-
-""" 
 from time import sleep
 
 def GeraFila(ListPrioridades, Processos):
@@ -31,10 +22,12 @@ def GeraFila(ListPrioridades, Processos):
     return FilaPrioridades
 
 def RoundRobin(FilaPrioridades):
+    sleep(1)
     print(f"\n\033[32m{'=-'*35}\nROUND ROBIN ALGORITMO\n{'=-'*35}\033[m")
 
     for p,fila in FilaPrioridades.items():
-        print(f"\n\033[34m{'=-'*35}\nExecutando a fila de prioridade {p}\n{'=-'*35}\033[m")
+        print(f"\n\033[34m{'=-'*35}\nExecutando a fila de processom com prioridade {p}\n{'=-'*35}\033[m")
+        sleep(1)
         print(f"Fila : {fila}\n")
         TimeCurrent=TimeSlice
         ProcessosFinalizados=0
@@ -67,26 +60,27 @@ def RoundRobin(FilaPrioridades):
 def FilaUnicaPrioridades(Processos):
     print(Processos)
     FilaUnicaProcessos= sorted(Processos.items(), key= lambda item : item[1][1])#organiza os processos de acordo com a prioridade
+    sleep(1)
     print(f"\n\033[32m{'=-'*35}\nFILA ÚNICA COM PRIORIDADES - ALGORITMO\n{'=-'*35}\033[m")
     print(f'Fila de processamento : {FilaUnicaProcessos}')
 
     for processo in FilaUnicaProcessos:
         TimeCurrent = 0
-        print("\n")
         while TimeCurrent < processo[1][0] :
             TimeCurrent+=TimeSlice
             if TimeCurrent == processo[1][0]:#
-                print(f"\033[31m{processo[0]}:{TimeSlice}*\033[m",end="")
+                print(f"\033[31m{processo[0]}:{TimeSlice}*\033[m")
+                sleep(0)
                 break
             elif processo[1][0]-TimeCurrent < 0: 
-                print(f"\033[31m{processo[0]}:{processo[1][0]%TimeSlice}* \033[m",end="")
+                print(f"\033[31m{processo[0]}:{processo[1][0]%TimeSlice}* \033[m")
+                sleep(1)
                 break
             else:
-                print(f"{processo[0]}:{TimeSlice}, ",end="")
+                print(f"{processo[0]}:{TimeSlice}")
             sleep(1)
 
 
-    
 #receber time slice
 TimeSlice = int(input("Time slice: "))
 
