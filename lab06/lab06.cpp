@@ -1,19 +1,65 @@
-#include<stdio.h>
-#include<math.h>
 #include <iostream>
+#include <stdio.h>
+#include <unistd.h>
+#include<math.h>
+
+#define BUFSIZE 80
+//O exemplo abaixo cria um processo FILHO através da chamada de sistema fork() e cria um buffer para troca de informações entre os processos através da chamada de sistem pipe().
+//FILHO escreve para o processo PAI através do pipe.
 
 using namespace std;
 
 
 float determinant(float [][25], float);
-void cofactor(float [][25], float);
-void transpose(float [][25], float [][25], float);
+void cofactor(float [][25], float, int fd);
+void transpose(float [][25], float [][25], float, int fd);
 int MultiplicacaoMatrizes( float MatrizA[25][25], float MatrizB[25][25], float n);
+int CalculoInversaFilho(int fd);
 
-int main(){
+int main(void)
+{
+  int fd[2];
+  int n=0;
+  int i;
+  char inverse[25][25];
+  
+  pipe(fd); /* fd[0] - leitura, fd[1] - escrita*/
+
+  if (fork() == 0) {
+    close(fd[0]);
+
+    printf("Processo FILHO escreve: %d\n",n);
+    CalculoInversaFilho(fd[1]);
+    sleep(2);
+  
+  }
+  else {
+    close(fd[1]);
+    
+    printf("\t\t\t Processo PAI realiza a leitura do pipe\n");
+
+    read(fd[0], inverse, BUFSIZE);
+
+    printf("\n\n\nThe inverse of matrix is : \n");
+ 
+    for (int i = 0;i < 2; i++){
+      for (int j = 0;j < 2; j++){
+        printf("\t%.2f", inverse[i][j]);
+      }
+
+      printf("\n");
+    }
+    
+    printf("\t\t\t Processo PAI lê:");
+
+
+    
+  }
+}
+
+int CalculoInversaFilho(int fd[1]){
   float a[25][25], k, d;
   int i, j;
-  int MatrizA[25][25], MatrizB[25][25];
 
   printf("Entre com a ordem da matriz : ");
   scanf("%f", &k);
@@ -28,7 +74,7 @@ int main(){
   if (d == 0)
     printf("\nInverse of Entered Matrix is not possible\n");
   else
-    cofactor(a, k);
+    cofactor(a, k, fd[1]);
 
 }
 
@@ -72,7 +118,7 @@ else{
   return (det);
 }
  
-void cofactor(float num[25][25], float f){
+void cofactor(float num[25][25], float f, int fd[1]){
   float b[25][25], fac[25][25];
   int p, q, m, n, i, j;
   for (q = 0;q < f; q++){
@@ -96,11 +142,11 @@ void cofactor(float num[25][25], float f){
       fac[q][p] = pow(-1, q + p) * determinant(b, f - 1);
     }
   }
-  transpose(num, fac, f);
+  transpose(num, fac, f, fd[1]);
 }
 
 /*Finding transpose of matrix*/ 
-void transpose(float num[25][25], float fac[25][25], float r){
+void transpose(float num[25][25], float fac[25][25], float r, int fd[1]){
   int i, j;
   float b[25][25], inverse[25][25], d;
  
@@ -116,18 +162,20 @@ void transpose(float num[25][25], float fac[25][25], float r){
       inverse[i][j] = b[i][j] / d;
     }
   }
+
+  write(fd[1], inverse, BUFSIZE);
   
-  printf("\n\n\nThe inverse of matrix is : \n");
+  // printf("\n\n\nThe inverse of matrix is : \n");
  
-  for (i = 0;i < r; i++){
-    for (j = 0;j < r; j++){
-      printf("\t%.2f", inverse[i][j]);
-    }
+  // for (i = 0;i < r; i++){
+  //   for (j = 0;j < r; j++){
+  //     printf("\t%.2f", inverse[i][j]);
+  //   }
 
-    printf("\n");
-  }
+  //   printf("\n");
+  // }
 
-  MultiplicacaoMatrizes(inverse, inverse, r);
+  // MultiplicacaoMatrizes(inverse, inverse, r);
 }
 
 /* Multiplica calculo =-=-=-=-=-=-=-=-=-=*/

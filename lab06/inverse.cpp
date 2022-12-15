@@ -8,9 +8,9 @@ void transpose(float [][25], float [][25], float);
 int main(){
   float a[25][25], k, d;
   int i, j;
-  printf("Enter the order of the Matrix '': ");
+  printf("Insira a ordem da matriz '': ");
   scanf("%f", &k);
-  printf("Enter the elements of %.0fX%.0f Matrix : \n", k, k);
+  printf("Insira os elementos da matriz %.0fX%.0f  \n", k, k);
   for (i = 0;i < k; i++){
     for (j = 0;j < k; j++){
       scanf("%f", &a[i][j]);
