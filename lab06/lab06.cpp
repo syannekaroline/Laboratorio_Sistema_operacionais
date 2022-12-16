@@ -1,18 +1,20 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <iostream>
-#include<stdio.h>
 #include<math.h>
+#define TAM 2504
 
 typedef struct{
     float A[25][25];
+    int ordem;
 }Matriz;
 
 float determinant(float [][25], float);
 Matriz cofactor(float [][25], float);
 Matriz transpose(float [][25], float [][25], float);
 Matriz Inversa();
-#define BUFSIZE 80
+int MultiplicacaoMatrizes(float MatrizA[25][25], float MatrizB[25][25], int ordem);
+
 
 using namespace std;
 
@@ -28,31 +30,19 @@ int main(void)
     if (fork() == 0) {
         close(fd[0]);
 
+        printf("Gerando a inversa do processo Filho\n");
         InversaFilho = Inversa();
-        printf("Processo FILHO escreve: ");
-
-        write(fd[1], InversaFilho.A, BUFSIZE); 
-        sleep(2);
+        write(fd[1], InversaFilho.A, sizeof(InversaFilho.A));
     }
     else {
         close(fd[1]);
 
-        printf("\t\t\t Processo PAI realiza a leitura do pipe\n");
+        printf("\t\t\t Processo PAI realiza a leitura do pipe -- Comunicação com o filho \n");
+        read(fd[0], InversaFilho.A, sizeof(InversaFilho.A));
+        printf("\t\t\t Criando a inversa do Pai \n");
+        InversaPai = Inversa();
 
-        read(fd[0], InversaFilho.A, BUFSIZE);
-        
-        printf("\n\n\nThe inverse of matrix is : \n");
- 
-        for (int i = 0;i < 2; i++)
-            {
-            for (int j = 0;j < 2; j++)
-            {
-                printf("\t%.2f", InversaFilho.A[i][j]);
-            }
-            printf("\n");
-        }
-        printf("\t\t\t Processo PAI lê");
-        
+        MultiplicacaoMatrizes(InversaFilho.A, InversaPai.A, InversaFilho.ordem);   
     }
 }
 
@@ -65,6 +55,7 @@ Matriz Inversa()
 
   printf("Enter the order of the Matrix '': ");
   scanf("%f", &k);
+  inversa.ordem = k;
   printf("Enter the elements of %.0fX%.0f Matrix : \n", k, k);
   for (i = 0;i < k; i++)
     {
@@ -78,7 +69,7 @@ Matriz Inversa()
    printf("\nInverse of Entered Matrix is not possible\n");
   else
    inversa = cofactor(a, k);
-   
+
    return inversa;
 }
  
@@ -163,68 +154,69 @@ Matriz cofactor(float num[25][25], float f)
 }
 
 /*Finding transpose of matrix*/ 
-Matriz transpose(float num[25][25], float fac[25][25], float r)
-{
-  int i, j;
-  float b[25][25], d;
-  Matriz  inverse;
+Matriz transpose(float num[25][25], float fac[25][25], float r){
+    int i, j;
+    float b[25][25], d;
+    Matriz  inverse;
 
-  for (i = 0;i < r; i++)
-    {
-     for (j = 0;j < r; j++)
-       {
-         b[i][j] = fac[j][i];
+    for (i = 0;i < r; i++){
+        for (j = 0;j < r; j++){
+            b[i][j] = fac[j][i];
         }
     }
-  d = determinant(num, r);
-  for (i = 0;i < r; i++)
-    {
-     for (j = 0;j < r; j++)
-       {
-        inverse.A[i][j] = b[i][j] / d;
+
+    d = determinant(num, r);
+    for (i = 0;i < r; i++){
+        for (j = 0;j < r; j++){
+            inverse.A[i][j] = b[i][j] / d;
         }
     }
+
+    
+       printf("\n\n\nThe inverse of matrix is : \n");
+
+       for (i = 0;i < r; i++)
+        {
+         for (j = 0;j < r; j++)
+           {
+             printf("\t%.2f", inverse.A[i][j]);
+            }
+        printf("\n");
+         }
 
     return inverse;
-//    printf("\n\n\nThe inverse of matrix is : \n");
- 
-//    for (i = 0;i < r; i++)
-//     {
-//      for (j = 0;j < r; j++)
-//        {
-//          printf("\t%f", inverse[i][j]);
-//         }
-//     printf("\n");
-//      }
 }
 
-int MultiplicacaoMatrizes( float MatrizA[25][25], float MatrizB[10][10], float n)
-{   
-    int mult[10][10];
+int MultiplicacaoMatrizes( float MatrizA[25][25], float MatrizB[25][25], int n){  
+    int mult[10][10], i, j, k;
+
+    // If column of first matrix in not equal to row of second matrix,
+    // ask the user to enter the size of matrix again.
 
     // Initializing elements of matrix mult to 0.
-    for(int i = 0; i < n; ++i){
-        for(int j = 0; j < n; ++j)
+    for(i = 0; i < n; ++i)
+        for(j = 0; j < n; ++j)
         {
             mult[i][j]=0;
         }
-    }
+
     // Multiplying matrix a and b and storing in array mult.
-    for(int i = 0; i < n; ++i){
-        for(int j = 0; j < n; ++j)
-            for(int k = 0; k < n; ++k)
+    for(i = 0; i < n; ++i)
+        for(j = 0; j < n; ++j)
+            for(k = 0; k < n; ++k)
             {
                 mult[i][j] += MatrizA[i][k] * MatrizB[k][j];
             }
-    }
+
     // Displaying the multiplication of two matrix.
     cout << endl << "Output Matrix: " << endl;
-    for(int i = 0; i < n; ++i){
-        for(int j = 0; j < n; ++j){
-            cout << " " << mult[i][j];
-            if(j == n-1)
+    for(i = 0; i < n; ++i)
+    for(j = 0; j < n; ++j)
+    {
+        cout << " " << mult[i][j];
+        if(j == n-1)
             cout << endl;
-        }
     }
+
     return 0;
 }
